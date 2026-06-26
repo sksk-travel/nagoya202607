@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nagoya & Kanazawa Travel Plan 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+HK:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #fcfbfa;
+            --text-main: #2c2a29;
+            --text-muted: #7a7571;
+            --accent: #d4a373;
+            --accent-light: #f4ebd0;
+            --card-bg: #ffffff;
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+            --radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Noto Sans HK', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        header {
+            max-width: 1000px;
+            margin: 0 auto 40px auto;
+            text-align: center;
+        }
+        header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+        header p {
+            color: var(--text-muted);
+            font-size: 1rem;
+            font-weight: 300;
+        }
+
+        /* 日期選擇器按鈕 */
+        .date-picker-container {
+            max-width: 1000px;
+            margin: 0 auto 30px auto;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .date-btn {
+            background: transparent;
+            border: 1px solid #e0dbd7;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            transition: var(--transition);
+        }
+        .date-btn:hover, .date-btn.active {
+            background-color: var(--text-main);
+            color: #fff;
+            border-color: var(--text-main);
+            transform: translateY(-2px);
+        }
+
+        /* 主容器 */
+        .main-content {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* 日期區塊 */
+        .day-section {
+            display: none;
+            animation: fadeIn 0.5s ease forwards;
+        }
+        .day-section.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .day-title {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            font-family: 'Playfair Display', serif;
+            border-left: 4px solid var(--accent);
+            padding-left: 15px;
+        }
+
+        /* 項目分類區塊 (景點、住宿、交通) */
+        .category-group {
+            margin-bottom: 35px;
+        }
+        .category-heading {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 1px;
+        }
+        .category-heading::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #eee;
+        }
+
+        /* 卡片佈局 */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.02);
+            transition: var(--transition);
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        /* 交通圖片欄位專用樣式 */
+        .card-image-box {
+            width: 100%;
+            height: 180px;
+            background-color: #f0ece9;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        .card:hover .card-image-box img {
+            transform: scale(1.05);
+        }
+        
+        /* 當圖片未載入時顯示的提示 */
+        .img-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-align: center;
+            pointer-events: none;
+            width: 80%;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        .card-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            white-space: pre-line;
+        }
+        
+        .card-link {
+            display: inline-block;
+            margin-top: 12px;
+            font-size: 0.85rem;
+            color: var(--accent);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: var(--transition);
+        }
+        .card-link:hover {
+            border-bottom-color: var(--accent);
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 20px 10px; }
+            header h1 { font-size: 2rem; }
+            .date-btn { padding: 8px 16px; font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Nagoya & Kanazawa</h1>
+        <p>Summer Journey • July 2026</p>
+    </header>
+
+    <div class="date-picker-container">
+        <button class="date-btn active" onclick="switchDay('day1', this)">1/7 (三)</button>
+        <button class="date-btn" onclick="switchDay('day2', this)">2/7 (四)</button>
+        <button class="date-btn" onclick="switchDay('day3', this)">3/7 (五)</button>
+        <button class="date-btn" onclick="switchDay('day4', this)">4/7 (六)</button>
+        <button class="date-btn" onclick="switchDay('day5', this)">5/7 (日)</button>
+        <button class="date-btn" onclick="switchDay('day6', this)">6/7 (一)</button>
+        <button class="date-btn" onclick="switchDay('day7', this)">7/7 (二)</button>
+    </div>
+
+    <div class="main-content">
+
+        <div id="day1" class="day-section active">
+            <h2 class="day-title">Day 1 — 1/7 (三)</h2>
+            
+            <div class="category-group">
+                <div class="category-heading">✈️ 交通</div>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">香港快運 UO690</div>
+                            <div class="card-desc">10:50 香港 (HKG) ➔ 15:50 名古屋 (NGO)</div>
+                            
+                        </div>
+                    </div>
+<div class="card">
+                        <div class="card-body">
+                            <div class="card-title">機場→酒店</div>
+                            <div class="card-desc">名鐵特急(μ－ＳＫＹ)  1號月台 * 名鐵名古屋站落，行10分鐘</div>
+                        </div>
+                    </div>
+<div class="card">
+                        <div class="card-body">
+                            <div class="card-title">酒店→榮商圈</div>
+                            <div class="card-desc">名古屋JR，搭東山線→榮（愛知）站落</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="category-group">
+                <div class="category-heading">📍 景點</div>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">榮商圈 / 綠洲21 / 電視塔 (MIRAI TOWER)</div>
+                            <div class="card-desc">抵達名古屋後的市區夜間散步與購物。</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="category-group">
+                <div class="category-heading">🏨 住宿</div>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">名鉄イン名古屋駅新幹線口</div>
+                            <div class="card-desc">鄰近名古屋站，交通與購物皆便利。<br>1 Chome-6-3 Noritake, Nakamura Ward, Nagoya, Aichi 453-0014日本</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="day2" class="day-section">
+            <h2 class="day-title">Day 2 — 2/7 (四)</h2>
+            
+            <div class="category-group">
+                <div class="category-heading">🚌 交通</div>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-image-box">
+                            <a href="https://github.com/sksk-travel/nagoya202607/blob/main/July2-1.png?raw=true" target="_blank">
+                                <img src="https://github.com/sksk-travel/nagoya202607/blob/main/July2-1.png?raw=true" alt="交通">
+                            </a>
+                            <div class="img-placeholder"> </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-title">09:10-09:49 酒店→ 鈴鹿賽車場 </div>
+                            <div class="card-desc">行近鐵名古屋車站(近鐵特急) (大阪難波) ，白子站落</div>
+                            <a href="https://github.com/sksk-travel/nagoya202607/blob/main/July2-1.png?raw=true" class="card-link" target="_blank">🔍 點擊完整顯示交通圖</a>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-image-box">
+                            <a href="https://github.com/sksk-travel/nagoya202607/blob/main/July2-2_1.png?raw=true" target="_blank">
+                                <img src="https://github.com/sksk-travel/nagoya202607/blob/main/July2-2_1.png?raw=true" alt="交通">
+                            </a>
+                            <div class="img-placeholder"> </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-title">10:20-10:40 酒店→ 鈴鹿賽車場 </div>
+                            <div class="card-desc">白子站出站後至「1號公車站牌」，轉搭三重交通巴士 3號線，(白子賽車場線火車) Suzuka Circuit 鈴鹿サ－キット落</div>
+                            <a href="https://github.com/sksk-travel/nagoya202607/blob/main/July2-1.png?raw=true" class="card-link" target="_blank">🔍 點擊完整顯示交通圖</a>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-image-box">
+                            <a href="https://github.com/sksk-travel/nagoya202607/blob/main/July2-3.png?raw=true" target="_blank">
+                                <img src="https://github.com/sksk-travel/nagoya202607/blob/main/July2-3.png?raw=true" alt="交通">
+                            </a>
+                            <div class="img-placeholder"> </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-title">14:10-14:32/15:10-15:33 <br>鈴鹿賽車場→ 酒店 </div>
+                            <div class="card-desc">調轉番搭就ok</div>
+                            <a href="https://github.com/sksk-travel/nagoya202607/blob/main/July2-3.png?raw=true" class="card-link" target="_blank">🔍 點擊完整顯示交通圖</a>
+                        </div>
+                    </div> 
+
+                    <div class="card">
+                        <div class="card-image-box">
+                            <a href="https://github.com/sksk-travel/nagoya202607/blob/main/July2-4.png.jpg?raw=true" target="_blank">
+                                <img src="https://github.com/sksk-travel/nagoya202607/blob/main/July2-4.png.jpg?raw=true" alt="交通">
+                            </a>
+                            <div class="img-placeholder"> </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-title">14:56-15:43/15:51-16:45 <br>鈴鹿賽車場→ 酒店 </div>
+                            <div class="card-desc">調轉番搭就ok</div>
+                            <a href="https://github.com/sksk-travel/nagoya202607/blob/main/July2-4.png.jpg?raw=true" class="card-link" target="_blank">🔍 點擊完整顯示交通圖</a>
+                        </div>
+                    </div> 
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">酒店→ 大須觀音寺 & 大須商店街</div>
+                            <div class="card-desc">酒店行去名古屋JR<br>搭櫻通線→ 丸之內（名古屋市營）<br>轉車鶴舞線→ 大須觀音站落</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">大須觀音寺 & 大須商店街→ 酒店</div>
+                            <div class="card-desc">鶴舞線→ 伏見（愛知)站<br>轉車東山線→ 名古屋車站落</div>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+
+            <div class="category-group">
+                <div class="category-heading">📍 景點</div>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">鈴鹿賽車場 (Suzuka Circuit)</div>
+                            <div class="card-desc">⚠️ 注意：10點前必須要入場！</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">大須觀音寺 & 大須商店街</div>
+                            <div class="card-desc">參拜歷史古剎並逛街享用在地美食。</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="category-group">
+                <div class="category-heading">🏨 住宿</div>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">名鉄イン名古屋駅新幹線口</div>
+                            <div class="card-desc">續住。</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="day3" class="day-section">
+            <h2 class="day-title">Day 3 — 3/7 (五)</h2>
+            
+            <div class="category-group">
+                <div class="category-heading">🚌 交通</div>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-image-box">
+                            <a href="images/trans_d3.jpg" target="_blank">
+                                <img src="images/trans_d3.jpg" alt="交通">
+                            </a>
+                            <div class="img-placeholder">請放入愛知高速交通（Linimo）或巴士圖<br>(trans_d3.jpg)</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-title">前往吉卜力公園交通</div>
+                            <div class="card-desc">名古屋市營地下鐵(東山線) to終點站「藤丘站」<br>轉乘愛知高速交通磁浮電車(愛知高速交通東部丘陵線)<br>to 愛·地球博紀念公園車站落車</div>
+                            <a href="images/trans_d3.jpg" class="card-link" target="_blank">🔍 點擊完整顯示交通圖</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="category-group">
+                <div class="category-heading">📍 景點</div>
+                <div class="card-grid">
+                    <div class="card" style="grid-column: 1 / -1;">
+                        <div class="card-body">
+                            <div class="card-title">吉卜力公園 (Ghibli Park)</div>
+                            <div class="card-desc">【預約時間 10:00 - 17:00】「吉卜力大倉庫園區」指定入場。
+                            
+☀️ 上午：前往「動動力森林」看小月和小梅的家、參觀吉卜力大倉庫
+🍴 中午：「魔女之谷」參觀，並於園區餐廳享用午餐
+🍡 下午：「魔法之里」體驗手烤日式五平餅
+🍁 傍邊：順遊「青春之丘」並至紀念品商店採買</div>
+                            <a href="https://jioujiou.tw/ghibli-park/" class="card-link" target="_blank">🔗 查看吉卜力地圖與導覽攻略</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="category-group">
+                <div class="category-heading">🏨 住宿</div>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">名鉄イン名古屋駅新幹線口</div>
+                            <div class="card-desc">續住。</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="day4" class="day-section">
+            <h2 class="day-title">Day 4 — 4/7 (六)</h2>
+            
+            <div class="category-group">
+                <div class="category-heading">🚄 交通</div>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-image-box">
+                            <a href="https://github.com/sksk-travel/nagoya202607/blob/main/July4-1.png?raw=true" target="_blank">
+                                <img src="https://github.com/sksk-travel/nagoya202607/blob/main/July4-1.png?raw=true" alt="交通">
+                            </a>
+                            <div class="img-placeholder"> </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-title">07:51-09:27 名古屋→敦賀 </div>
+                            <div class="card-desc"> </div>
+                            <a href="https://github.com/sksk-travel/nagoya202607/blob/main/July4-1.png?raw=true" class="card-link" target="_blank">🔍 點擊完整顯示交通圖</a>
+                        </div>
+                    </div> 
+                    <div class="card">
+                        <div class="card-image-box">
+                            <a href="https://github.com/sksk-travel/nagoya202607/blob/main/July4-2.png?raw=true" target="_blank">
+                                <img src="https://github.com/sksk-travel/nagoya202607/blob/main/July4-2.png?raw=true" alt="交通">
+                            </a>
+                            <div class="img-placeholder"> </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-title">09:46-10:43 / 09:58-10:56 <br>敦賀→金澤 </div>
+                            <div class="card-desc"> </div>
+                            <a href="https://github.com/sksk-travel/nagoya202607/blob/main/July4-2.png?raw=true" class="card-link" target="_blank">🔍 點擊完整顯示交通圖</a>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+
+            <div class="category-group">
+                <div class="category-heading">📍 景點</div>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">東茶屋街</div>
+                            <div class="card-desc">利用「金澤周遊巴士［右回りルート］」前往。漫步於江戶時代風情木造老街。</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">近江町市場</div>
+                            <div class="card-desc">品嚐新鮮海鮮丼與金澤在地小吃。</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">長町武家屋敷跡</div>
+                            <div class="card-desc"> </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="category-group">
+                <div class="category-heading">🏨 住宿</div>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">金澤托里菲托飯店 (HOTEL TORIFITO KANAZAWA)</div>
+                            <div class="card-desc">2 Chome-12-1 Honmachi, Kanazawa, Ishikawa 920-0853日本</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="day5" class="day-section">
+            <h2 class="day-title">Day 5 — 5/7 (日)</h2>
+            
+            <div class="category-group">
+                <div class="category-heading">🚌 交通</div>
+                <div class="card-grid">
+                  
+                    <div class="card">
+                        <div class="card-image-box">
+                            <a href="https://github.com/sksk-travel/nagoya202607/blob/main/July5-1_1.jpg?raw=true" target="_blank">
+                                <img src="https://github.com/sksk-travel/nagoya202607/blob/main/July5-1_1.jpg?raw=true" alt="交通">
+                            </a>
+                            <div class="img-placeholder"> </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-title">14:55-15:36→16:09-17:49/ <br>15:04-16:01→16:09-17:49 <br>金澤→敦賀→名古屋JR </div>
+                            <div class="card-desc"> </div>
+                            <a href="https://github.com/sksk-travel/nagoya202607/blob/main/July5-1_1.jpg?raw=true" class="card-link" target="_blank">🔍 點擊完整顯示交通圖</a>
+                        </div>
+                    </div> 
+                   
+                </div>
+            </div>
+
+            <div class="category-group">
+                <div class="category-heading">📍 景點</div>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">妙立寺 (忍者寺)</div>
+                            <div class="card-desc">參觀內部充滿陷阱門與秘密機關的建築。</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">兼六園 & 金澤城公園</div>
+                            <div class="card-desc">遊覽日本三大名園，享受傳統迴遊式庭園的視覺盛宴。</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">金澤21世紀美術館 & 長町武家屋敷跡</div>
+                            <div class="card-desc">參觀當代藝術「泳池」，傍晚至武士住宅土牆老街漫步。</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="category-group">
+                <div class="category-heading">🏨 住宿</div>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">三井花園酒店名古屋普米爾</div>
+                            <div class="card-desc">4 Chome-11-27 Meieki, Nakamura Ward, Nagoya, Aichi 450-0002日本</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="day6" class="day-section">
+            <h2 class="day-title">Day 6 — 6/7 (一)</h2>
+            
+            <div class="category-group">
+                <div class="category-heading">🚄 交通</div>
+                <div class="card-grid">
+
+                </div>
+            </div>
+
+            <div class="category-group">
+                <div class="category-heading">📍 景點</div>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">名古屋港水族館</div>
+                            <div class="card-desc">觀賞豐富的海洋生物、海豚表演與招牌殺人鯨。</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">犬山城攝影??? </div>
+                            <div class="card-desc"></div>
+                            <a href="https://hk.tabiiro.travel/leisure/s/206216-inuyama-inuyamabiyori/" class="card-link" target="_blank">🔗 查看犬山日和和服/攝影資訊</a>
+                        </div>
+                    </div>                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">熱田神宮 (Optional)</div>
+                            <div class="card-desc"></div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="category-group">
+                <div class="category-heading">🏨 住宿</div>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">三井花園酒店名古屋普米爾</div>
+                            <div class="card-desc">4 Chome-11-27 Meieki, Nakamura Ward, Nagoya, Aichi 450-0002日本</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="day7" class="day-section">
+            <h2 class="day-title">Day 7 — 7/7 (二)</h2>
+            
+            <div class="category-group">
+                <div class="category-heading">✈️ 交通</div>
+                <div class="card-grid">
+                   <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">酒店→機場</div>
+                            <div class="card-desc">名鐵名古屋站，乘坐名鐵特急(μ－ＳＫＹ)  ，中部國際機場落</div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function switchDay(dayId, btnElement) {
+            const sections = document.querySelectorAll('.day-section');
+            sections.forEach(sec => sec.classList.remove('active'));
+
+            const buttons = document.querySelectorAll('.date-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(dayId).classList.add('active');
+            btnElement.classList.add('active');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
