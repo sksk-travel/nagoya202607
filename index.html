@@ -6,7 +6,7 @@
     <title>Nagoya & Kanazawa Travel Plan 2026</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+HK:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+HK:wght=300;400;500;700&family=Playfair+Display:ital,wght=0,400;0,600;1,400&display=swap" rel="stylesheet">
     
     <style>
         :root {
@@ -51,13 +51,11 @@
         /* 日期選擇器按鈕 */
         .date-picker-container {
             max-width: 1000px;
-            margin: 0 auto 30px auto;
+            margin: 0 auto 20px auto;
             display: flex;
             justify-content: center;
             gap: 10px;
             flex-wrap: wrap;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
         }
         .date-btn {
             background: transparent;
@@ -74,6 +72,33 @@
             color: #fff;
             border-color: var(--text-main);
             transform: translateY(-2px);
+        }
+
+        /* 新增：分類 Tab 貨櫃 */
+        .category-tab-container {
+            max-width: 1000px;
+            margin: 0 auto 30px auto;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+        .category-tab-btn {
+            background: #fff;
+            border: 1px solid #e0dbd7;
+            padding: 8px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            transition: var(--transition);
+        }
+        .category-tab-btn:hover, .category-tab-btn.active {
+            background-color: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
         }
 
         /* 主容器 */
@@ -201,10 +226,23 @@
             border-bottom-color: var(--accent);
         }
 
+        /* 找不到內容時的提示樣式 */
+        .no-content-tip {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 40px;
+            font-size: 1rem;
+            background: #fff;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
         @media (max-width: 600px) {
             body { padding: 20px 10px; }
             header h1 { font-size: 2rem; }
             .date-btn { padding: 8px 16px; font-size: 0.8rem; }
+            .category-tab-container { gap: 8px; padding-bottom: 15px; }
+            .category-tab-btn { padding: 6px 12px; font-size: 0.8rem; }
         }
     </style>
 </head>
@@ -215,6 +253,7 @@
         <p>Summer Journey • July 2026</p>
     </header>
 
+    <!-- 日期選擇器 -->
     <div class="date-picker-container">
         <button class="date-btn active" onclick="switchDay('day1', this)">1/7 (三)</button>
         <button class="date-btn" onclick="switchDay('day2', this)">2/7 (四)</button>
@@ -225,28 +264,36 @@
         <button class="date-btn" onclick="switchDay('day7', this)">7/7 (二)</button>
     </div>
 
+    <!-- 新增：分類切換 Tab -->
+    <div class="category-tab-container">
+        <button class="category-tab-btn active" onclick="switchCategory('all', this)">✨ 全部</button>
+        <button class="category-tab-btn" onclick="switchCategory('sightseeing', this)">📍 景點</button>
+        <button class="category-tab-btn" onclick="switchCategory('transport', this)">🚌 交通</button>
+        <button class="category-tab-btn" onclick="switchCategory('accommodation', this)">🏨 住宿</button>
+    </div>
+
     <div class="main-content">
 
+        <!-- Day 1 -->
         <div id="day1" class="day-section active">
             <h2 class="day-title">Day 1 — 1/7 (三)</h2>
             
-            <div class="category-group">
+            <div class="category-group" data-category="transport">
                 <div class="category-heading">✈️ 交通</div>
                 <div class="card-grid">
                     <div class="card">
                         <div class="card-body">
                             <div class="card-title">香港快運 UO690</div>
                             <div class="card-desc">10:50 香港 (HKG) ➔ 15:50 名古屋 (NGO)</div>
-                            
                         </div>
                     </div>
-<div class="card">
+                    <div class="card">
                         <div class="card-body">
                             <div class="card-title">機場→酒店</div>
                             <div class="card-desc">名鐵特急(μ－ＳＫＹ)  1號月台 * 名鐵名古屋站落，行10分鐘</div>
                         </div>
                     </div>
-<div class="card">
+                    <div class="card">
                         <div class="card-body">
                             <div class="card-title">酒店→榮商圈</div>
                             <div class="card-desc">名古屋JR，搭東山線→榮（愛知）站落</div>
@@ -255,7 +302,7 @@
                 </div>
             </div>
 
-            <div class="category-group">
+            <div class="category-group" data-category="sightseeing">
                 <div class="category-heading">📍 景點</div>
                 <div class="card-grid">
                     <div class="card">
@@ -267,7 +314,7 @@
                 </div>
             </div>
 
-            <div class="category-group">
+            <div class="category-group" data-category="accommodation">
                 <div class="category-heading">🏨 住宿</div>
                 <div class="card-grid">
                     <div class="card">
@@ -280,10 +327,11 @@
             </div>
         </div>
 
+        <!-- Day 2 -->
         <div id="day2" class="day-section">
             <h2 class="day-title">Day 2 — 2/7 (四)</h2>
             
-            <div class="category-group">
+            <div class="category-group" data-category="transport">
                 <div class="category-heading">🚌 交通</div>
                 <div class="card-grid">
                     <div class="card">
@@ -358,7 +406,7 @@
                 </div>
             </div>
 
-            <div class="category-group">
+            <div class="category-group" data-category="sightseeing">
                 <div class="category-heading">📍 景點</div>
                 <div class="card-grid">
                     <div class="card">
@@ -376,7 +424,7 @@
                 </div>
             </div>
 
-            <div class="category-group">
+            <div class="category-group" data-category="accommodation">
                 <div class="category-heading">🏨 住宿</div>
                 <div class="card-grid">
                     <div class="card">
@@ -389,18 +437,19 @@
             </div>
         </div>
 
+        <!-- Day 3 -->
         <div id="day3" class="day-section">
             <h2 class="day-title">Day 3 — 3/7 (五)</h2>
             
-            <div class="category-group">
+            <div class="category-group" data-category="transport">
                 <div class="category-heading">🚌 交通</div>
                 <div class="card-grid">
                     <div class="card">
                         <div class="card-image-box">
-                            <a href="images/trans_d3.jpg" target="_blank">
-                                <img src="images/trans_d3.jpg" alt="交通">
+                            <a href="https://upload.wikimedia.org/wikipedia/en/5/51/Ponyo.png" target="_blank">
+                                <img src="https://upload.wikimedia.org/wikipedia/en/5/51/Ponyo.png" alt="交通">
                             </a>
-                            <div class="img-placeholder">請放入愛知高速交通（Linimo）或巴士圖<br>(trans_d3.jpg)</div>
+                            <div class="img-placeholder">https://upload.wikimedia.org/wikipedia/en/5/51/Ponyo.png</div>
                         </div>
                         <div class="card-body">
                             <div class="card-title">前往吉卜力公園交通</div>
@@ -411,7 +460,7 @@
                 </div>
             </div>
 
-            <div class="category-group">
+            <div class="category-group" data-category="sightseeing">
                 <div class="category-heading">📍 景點</div>
                 <div class="card-grid">
                     <div class="card" style="grid-column: 1 / -1;">
@@ -429,7 +478,7 @@
                 </div>
             </div>
 
-            <div class="category-group">
+            <div class="category-group" data-category="accommodation">
                 <div class="category-heading">🏨 住宿</div>
                 <div class="card-grid">
                     <div class="card">
@@ -442,10 +491,11 @@
             </div>
         </div>
 
+        <!-- Day 4 -->
         <div id="day4" class="day-section">
             <h2 class="day-title">Day 4 — 4/7 (六)</h2>
             
-            <div class="category-group">
+            <div class="category-group" data-category="transport">
                 <div class="category-heading">🚄 交通</div>
                 <div class="card-grid">
                     <div class="card">
@@ -477,7 +527,7 @@
                 </div>
             </div>
 
-            <div class="category-group">
+            <div class="category-group" data-category="sightseeing">
                 <div class="category-heading">📍 景點</div>
                 <div class="card-grid">
                     <div class="card">
@@ -501,7 +551,7 @@
                 </div>
             </div>
 
-            <div class="category-group">
+            <div class="category-group" data-category="accommodation">
                 <div class="category-heading">🏨 住宿</div>
                 <div class="card-grid">
                     <div class="card">
@@ -514,13 +564,13 @@
             </div>
         </div>
 
+        <!-- Day 5 -->
         <div id="day5" class="day-section">
             <h2 class="day-title">Day 5 — 5/7 (日)</h2>
             
-            <div class="category-group">
+            <div class="category-group" data-category="transport">
                 <div class="category-heading">🚌 交通</div>
                 <div class="card-grid">
-                  
                     <div class="card">
                         <div class="card-image-box">
                             <a href="https://github.com/sksk-travel/nagoya202607/blob/main/July5-1_1.jpg?raw=true" target="_blank">
@@ -534,11 +584,10 @@
                             <a href="https://github.com/sksk-travel/nagoya202607/blob/main/July5-1_1.jpg?raw=true" class="card-link" target="_blank">🔍 點擊完整顯示交通圖</a>
                         </div>
                     </div> 
-                   
                 </div>
             </div>
 
-            <div class="category-group">
+            <div class="category-group" data-category="sightseeing">
                 <div class="category-heading">📍 景點</div>
                 <div class="card-grid">
                     <div class="card">
@@ -562,7 +611,7 @@
                 </div>
             </div>
 
-            <div class="category-group">
+            <div class="category-group" data-category="accommodation">
                 <div class="category-heading">🏨 住宿</div>
                 <div class="card-grid">
                     <div class="card">
@@ -575,17 +624,18 @@
             </div>
         </div>
 
+        <!-- Day 6 -->
         <div id="day6" class="day-section">
             <h2 class="day-title">Day 6 — 6/7 (一)</h2>
             
-            <div class="category-group">
+            <div class="category-group" data-category="transport">
                 <div class="category-heading">🚄 交通</div>
                 <div class="card-grid">
-
+                    <!-- 暫無交通資料 -->
                 </div>
             </div>
 
-            <div class="category-group">
+            <div class="category-group" data-category="sightseeing">
                 <div class="category-heading">📍 景點</div>
                 <div class="card-grid">
                     <div class="card">
@@ -600,17 +650,17 @@
                             <div class="card-desc"></div>
                             <a href="https://hk.tabiiro.travel/leisure/s/206216-inuyama-inuyamabiyori/" class="card-link" target="_blank">🔗 查看犬山日和和服/攝影資訊</a>
                         </div>
-                    </div>                    <div class="card">
+                    </div>
+                    <div class="card">
                         <div class="card-body">
                             <div class="card-title">熱田神宮 (Optional)</div>
                             <div class="card-desc"></div>
-                            
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="category-group">
+            <div class="category-group" data-category="accommodation">
                 <div class="category-heading">🏨 住宿</div>
                 <div class="card-grid">
                     <div class="card">
@@ -623,19 +673,19 @@
             </div>
         </div>
 
+        <!-- Day 7 -->
         <div id="day7" class="day-section">
             <h2 class="day-title">Day 7 — 7/7 (二)</h2>
             
-            <div class="category-group">
+            <div class="category-group" data-category="transport">
                 <div class="category-heading">✈️ 交通</div>
                 <div class="card-grid">
                    <div class="card">
                         <div class="card-body">
                             <div class="card-title">酒店→機場</div>
-                            <div class="card-desc">名鐵名古屋站，乘坐名鐵特急(μ－ＳＫＹ)  ，中部國際機場落</div>
+                            <div class="card-desc">名鐵名古屋站，乘坐名鐵特急(μ－ＳＫＹ) ，中部國際機場落</div>
                         </div>
                     </div>
-                    
                 </div>
             </div>
         </div>
@@ -643,7 +693,13 @@
     </div>
 
     <script>
+        // 全域變數，紀錄目前選擇的日期與分類
+        let currentDayId = 'day1';
+        let currentCategory = 'all';
+
         function switchDay(dayId, btnElement) {
+            currentDayId = dayId; // 更新目前日期
+
             const sections = document.querySelectorAll('.day-section');
             sections.forEach(sec => sec.classList.remove('active'));
 
@@ -653,8 +709,64 @@
             document.getElementById(dayId).classList.add('active');
             btnElement.classList.add('active');
 
+            // 切換日期時，保持目前的分類篩選效果
+            filterContent();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+
+        function switchCategory(category, btnElement) {
+            currentCategory = category; // 更新目前分類
+
+            const buttons = document.querySelectorAll('.category-tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+
+            // 執行篩選
+            filterContent();
+        }
+
+        // 核心篩選邏輯
+        function filterContent() {
+            // 找到目前正在顯示的 Day 區塊
+            const activeSection = document.getElementById(currentDayId);
+            const groups = activeSection.querySelectorAll('.category-group');
+            let hasVisibleContent = false;
+
+            // 移除舊的「無內容提示」
+            const oldTip = activeSection.querySelector('.no-content-tip');
+            if (oldTip) oldTip.remove();
+
+            groups.forEach(group => {
+                const groupCategory = group.getAttribute('data-category');
+                
+                // 如果是 'all' 或者 分類吻合
+                if (currentCategory === 'all' || groupCategory === currentCategory) {
+                    // 檢查該群組內是否有卡片（防呆：有時可能只有標題沒卡片）
+                    const cards = group.querySelectorAll('.card');
+                    if (currentCategory !== 'all' && cards.length === 0) {
+                        group.style.display = 'none';
+                    } else {
+                        group.style.display = 'block';
+                        hasVisibleContent = true;
+                    }
+                } else {
+                    group.style.display = 'none';
+                }
+            });
+
+            // 如果該分類在當天沒有任何內容，顯示提示訊息（例如：第7天沒有住宿）
+            if (!hasVisibleContent) {
+                const tip = document.createElement('div');
+                tip.className = 'no-content-tip';
+                tip.innerText = '當天暫無此分類的行程安排 ☕';
+                activeSection.appendChild(tip);
+            }
+        }
+        
+        // 初始化檢查（確保預設的 Day 1 正常篩選）
+        document.addEventListener("DOMContentLoaded", function() {
+            filterContent();
+        });
     </script>
 </body>
 </html>
